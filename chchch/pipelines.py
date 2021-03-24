@@ -14,7 +14,7 @@ import datetime
 
 def mkdir_if_exist_not(name):
     if not os.path.isdir(name):
-        return os.makedirs(name)
+        return os.makedirs(name, exist_ok=True)
 
 class HindutamilPipeline:
     month_mapping = {'jan': 1,
@@ -63,3 +63,5 @@ class HindutamilPipeline:
             json.dump(dict(item), f, ensure_ascii=False)
 
         return item
+
+    

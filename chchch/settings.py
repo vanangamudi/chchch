@@ -88,4 +88,4 @@ HTTPCACHE_IGNORE_HTTP_CODES = []
 HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 
-DATA_DIR = '/home/vanangamudi/home/projects/code/tamilnlp/indraya-kiruvam/chchch/data/'
+DATA_DIR = '~/.chchch/data/'
