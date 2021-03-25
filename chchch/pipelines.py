@@ -37,7 +37,7 @@ class HindutamilPipeline:
                                          date[1], os.sep,
                                          date[2], os.sep)
         mkdir_if_exist_not(path)
-        return path
+        yield path
 
     def makedate(self, date):
         match = re.match('(\d+) (\w{3}) (\d{4})', date)
@@ -47,7 +47,7 @@ class HindutamilPipeline:
         else:
             day, month, year = 0, 0 ,0
 
-        return (year, month, day)
+        yield (year, month, day)
 
     def process_item(self, item, spider):
 
@@ -62,6 +62,6 @@ class HindutamilPipeline:
                   ) as f:
             json.dump(dict(item), f, ensure_ascii=False)
 
-        return item
+        yield item
 
     

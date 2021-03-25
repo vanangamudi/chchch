@@ -20,7 +20,7 @@ NEWSPIDER_MODULE = 'chchch.spiders'
 ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 100
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -44,9 +44,9 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
+SPIDER_MIDDLEWARES = {
 #    'chchch.middlewares.ChchchSpiderMiddleware': 543,
-#}
+}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
@@ -87,5 +87,28 @@ HTTPCACHE_DIR = 'httpcache'
 HTTPCACHE_IGNORE_HTTP_CODES = []
 HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
+CHCHCH_DIR = '/home/vanangamudi/.chchch'
 
-DATA_DIR = '~/.chchch/data/'
+DATA_DIR = '{}/data/'.format(CHCHCH_DIR)
+
+# run like  -- scrapy crawl hindutamil -s JOBDIR='CHCHCH_DIR/jobs/hindutamil
+DEPTH_PRIORITY = 1 
+SCHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleFifoDiskQueue'
+SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
+
+#https://stackoverflow.com/a/39173768
+"""
+Currently Scrapy does DNS resolution in a blocking way with usage of thread pool. With higher concurrency levels the crawling could be slow or even fail hitting DNS resolver timeouts. Possible solution to increase the number of threads handling DNS queries. The DNS queue will be processed faster speeding up establishing of connection and crawling overall.
+"""
+REACTOR_THREADPOOL_MAXSIZE = 20
+
+
+#deltafetch
+# install libdb-dev
+# pip install scrapy-deltafetch
+# scrapy crawl example -a deltafetch_reset=1
+SPIDER_MIDDLEWARES['scrapy_deltafetch.DeltaFetch'] = 100
+DELTAFETCH_ENABLED = True
+
+DELTAFETCH_DIR = '{}/deltafetch/hindutamil'.format(CHCHCH_DIR)
+
