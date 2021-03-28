@@ -1,12 +1,14 @@
+
+import bs4
+import pdb
+from w3lib.html import remove_tags, remove_tags_with_content
+
 import scrapy
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from chchch.items import HindutamilItem
 
-import bs4
-
-import pdb
-
+        
 class HindutamilSpider(CrawlSpider):
     name = 'hindutamil'
     allowed_domains = ['www.hindutamil.in']
@@ -21,16 +23,8 @@ class HindutamilSpider(CrawlSpider):
         ),
 
     ]
-
-    """
-    def parse_listing(self, response):
-        links = response.xpath('//a[not(contains(@href, "javascript:"))]/@href').extract()
-        for link in links:
-            url = response.urljoin(link)
-            yield scrapy.Request(url)
-    """
+   
     def parse(self, response):
-        #self.parse_listing(response)
 
         selector = response.xpath('//div[contains(@class, "article-section")]')
         if selector:
@@ -47,9 +41,8 @@ class HindutamilSpider(CrawlSpider):
            
             item['title'] = selector.xpath('//h1[contains(@class,"art-title")]/text()')[0].extract()
 
-            item['content'] = selector.xpath('//div[contains(@class, "pgContent")]//p//text()').extract()
-            item['content'] = '\n\n'.join(item['content']).replace('\r\n', '\n')
-
+            item['content'] = publish_info.xpath('//div[contains(@class, "pgContent")]')[0].extract()
+            item['content'] = remove_tags(remove_tags_with_content(item['content'], ('script', )))
 
             item['tags'] = selector.xpath('//div[contains(@class, "article-categories")]/a/text()').extract()
 
