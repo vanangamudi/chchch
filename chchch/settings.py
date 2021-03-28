@@ -87,7 +87,8 @@ HTTPCACHE_DIR = 'httpcache'
 HTTPCACHE_IGNORE_HTTP_CODES = []
 HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-CHCHCH_DIR = '/home/vanangamudi/.chchch'
+#CHCHCH_DIR = '/home/vanangamudi/.chchch'
+CHCHCH_DIR = '/home/agam/projects/code/tamilnlp/indraya-kiruvam/chchch/'
 
 DATA_DIR = '{}/data/'.format(CHCHCH_DIR)
 
@@ -107,8 +108,12 @@ REACTOR_THREADPOOL_MAXSIZE = 20
 # install libdb-dev
 # pip install scrapy-deltafetch
 # scrapy crawl example -a deltafetch_reset=1
-SPIDER_MIDDLEWARES['scrapy_deltafetch.DeltaFetch'] = 100
-DELTAFETCH_ENABLED = True
+#SPIDER_MIDDLEWARES['scrapy_deltafetch.DeltaFetch'] = 100
+#DELTAFETCH_ENABLED = True
 
-DELTAFETCH_DIR = '{}/deltafetch/hindutamil'.format(CHCHCH_DIR)
+#DELTAFETCH_DIR = '{}/deltafetch/hindutamil'.format(CHCHCH_DIR)
 
+MONGODB_SERVER = "localhost"
+MONGODB_PORT = 27017
+MONGODB_DB = "test"
+MONGODB_COLLECTION = "kiruvam"

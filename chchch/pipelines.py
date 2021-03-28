@@ -12,11 +12,30 @@ import re
 import json
 import datetime
 
-def mkdir_if_exist_not(name):
-    if not os.path.isdir(name):
-        return os.makedirs(name, exist_ok=True)
+import pymongo
 
-class HindutamilPipeline:
+from chchch.settings import (MONGODB_COLLECTION, MONGODB_DB,
+                             MONGODB_SERVER, MONGODB_PORT)
+
+class MongoDBPipeline(object):
+
+    def __init__(self):
+        connection = pymongo.MongoClient(
+            MONGODB_SERVER,
+            MONGODB_PORT
+        )
+        db = connection[MONGODB_DB]
+        self.collection = db[MONGODB_COLLECTION]
+
+    def process_item(self, item, spider):
+        for data in item:
+            if not data:
+                raise DropItem("Missing data!")
+        self.collection.insert(dict(item))
+        
+        return item
+
+class HindutamilPipeline(MongoDBPipeline):
     month_mapping = {'jan': 1,
                      'feb': 2,
                      'mar': 3,
@@ -30,15 +49,9 @@ class HindutamilPipeline:
                      'nov': 11,
                      'dec': 12
     }
-
-    def makepath(self, date):
-        path = '{}{}{}{}{}{}{}{}'.format(DATA_DIR, os.sep,
-                                         date[0], os.sep,
-                                         date[1], os.sep,
-                                         date[2], os.sep)
-        mkdir_if_exist_not(path)
-        yield path
-
+    def __init__(self):
+        super().__init__()
+        
     def makedate(self, date):
         match = re.match('(\d+) (\w{3}) (\d{4})', date)
         if match:
@@ -47,21 +60,12 @@ class HindutamilPipeline:
         else:
             day, month, year = 0, 0 ,0
 
-        yield (year, month, day)
+        return (year, month, day)
 
     def process_item(self, item, spider):
 
         item['date'] = self.makedate(item['date'])
-
-        path = self.makepath(item['date'])
-        with open('{}{}{}'.format(path,
-                                  os.sep,
-                                  item['filename'].replace('.html', '.json')),
-                  'w',
-                  encoding='utf-8'
-                  ) as f:
-            json.dump(dict(item), f, ensure_ascii=False)
-
-        yield item
-
+        
+        return super().process_item(item, spider)
+    
     
