@@ -81,14 +81,14 @@ ITEM_PIPELINES = {
 
 # Enable and configure HTTP caching (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
-HTTPCACHE_ENABLED = True
+HTTPCACHE_ENABLED = False
 HTTPCACHE_EXPIRATION_SECS = 0
 HTTPCACHE_DIR = 'httpcache'
 HTTPCACHE_IGNORE_HTTP_CODES = []
 HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.DbmCacheStorage'
 
-#CHCHCH_DIR = '/home/vanangamudi/.chchch'
-CHCHCH_DIR = '/home/agam/projects/code/tamilnlp/indraya-kiruvam/chchch/'
+CHCHCH_DIR = '/home/vanangamudi/.chchch'
+#CHCHCH_DIR = '/home/agam/projects/code/tamilnlp/indraya-kiruvam/chchch/'
 
 DATA_DIR = '{}/data/'.format(CHCHCH_DIR)
 
@@ -108,10 +108,10 @@ REACTOR_THREADPOOL_MAXSIZE = 20
 # install libdb-dev
 # pip install scrapy-deltafetch
 # scrapy crawl example -a deltafetch_reset=1
-#SPIDER_MIDDLEWARES['scrapy_deltafetch.DeltaFetch'] = 100
-#DELTAFETCH_ENABLED = True
+SPIDER_MIDDLEWARES['scrapy_deltafetch.DeltaFetch'] = 100
+DELTAFETCH_ENABLED = True
 
-#DELTAFETCH_DIR = '{}/deltafetch/hindutamil'.format(CHCHCH_DIR)
+DELTAFETCH_DIR = '{}/deltafetch/hindutamil'.format(CHCHCH_DIR)
 
 MONGODB_SERVER = "localhost"
 MONGODB_PORT = 27017

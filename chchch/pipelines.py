@@ -17,6 +17,8 @@ import pymongo
 from chchch.settings import (MONGODB_COLLECTION, MONGODB_DB,
                              MONGODB_SERVER, MONGODB_PORT)
 
+import chchch.util as util
+
 class MongoDBPipeline(object):
 
     def __init__(self):
@@ -31,7 +33,11 @@ class MongoDBPipeline(object):
         for data in item:
             if not data:
                 raise DropItem("Missing data!")
-        self.collection.insert(dict(item))
+        self.collection.replace_one(
+            {'url' : item['url'] },
+            dict(item),
+            upsert = True
+        )
         
         return item
 
