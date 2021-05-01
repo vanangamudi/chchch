@@ -90,11 +90,11 @@ HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.DbmCacheStorage'
 
 CHCHCH_DIR     = '/home/vanangamudi/agam/projects/code/tamilnlp/indraya-kiruvam/'
 
-DATA_DIR       = '{}/data/'.format(CHCHCH_DIR)
-DELTAFETCH_DIR = '{}/deltafetch/hindutamil'.format(CHCHCH_DIR)
-HTTPCACHE_DIR  = '{}/httpcache/hindutamil'.format(CHCHCH_DIR)
+DATA_DIR       = '{}/data/extract'.format(CHCHCH_DIR)
+DELTAFETCH_DIR = '{}/data/deltafetch/hindu_tamil'.format(CHCHCH_DIR)
+HTTPCACHE_DIR  = '{}/data/httpcache/hindu_tamil'.format(CHCHCH_DIR)
 
-# run like  -- scrapy crawl hindutamil -s JOBDIR='CHCHCH_DIR/jobs/hindu_tamil
+# run like  -- scrapy crawl hindu_tamil -s JOBDIR='CHCHCH_DIR/jobs/hindu_tamil
 DEPTH_PRIORITY = 1 
 SCHEDULER_DISK_QUEUE   = 'scrapy.squeues.PickleFifoDiskQueue'
 SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
