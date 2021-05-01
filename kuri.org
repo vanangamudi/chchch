@@ -1,3 +1,31 @@
+* scrapy setup
+** virutal env
+   #+begin_src bash
+
+     virtualenv -p python3 ~/env/chchch
+
+   #+end_src
+** setup scrapy
+   #+begin_src bash
+
+     sudo apt-get install libdb-dev #for deltafetch
+     pip install bs4 scrapy scrapy-deltafetch
+
+   #+end_src
+** pymongo
+   
+   #+begin_src bash
+
+     sudo apt-get install gnupg wget
+     wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+     echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+     sudo apt-get update
+     sudo apt-get install -y mongodb
+
+     pip install pymongo
+
+   #+end_src
+
 * TODO Separate projects for separate sites
 
 ** hierarchy is as follows
