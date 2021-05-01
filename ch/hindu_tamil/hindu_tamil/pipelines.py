@@ -31,11 +31,17 @@ class MongoDBPipeline(object):
         for data in item:
             if not data:
                 raise DropItem("Missing data!")
-        self.collection.insert(dict(item))
+        self.collection.replace_one(
+            {'url' : item['url'] },
+            dict(item),
+            upsert = True
+        )
         
         return item
 
-class HinduTamilPipeline(MongoDBPipeline):
+
+    
+class Pipeline(MongoDBPipeline):
     month_mapping = {'jan': 1,
                      'feb': 2,
                      'mar': 3,

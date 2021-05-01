@@ -63,7 +63,7 @@ SPIDER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'hindu_tamil.pipelines.HinduTamilPipeline': 300,
+    'hindu_tamil.pipelines.Pipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -83,18 +83,20 @@ ITEM_PIPELINES = {
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
 HTTPCACHE_ENABLED = True
 HTTPCACHE_EXPIRATION_SECS = 0
-HTTPCACHE_DIR = 'httpcache'
+
 HTTPCACHE_IGNORE_HTTP_CODES = []
 HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.DbmCacheStorage'
 
-#HINDU_TAMIL_DIR = '/home/vanangamudi/.hindu_tamil'
-HINDU_TAMIL_DIR = '/home/vanangamudi/agam/projects/code/tamilnlp/indraya-kiruvam/hindu_tamil/'
 
-DATA_DIR = '{}/data/'.format(HINDU_TAMIL_DIR)
+CHCHCH_DIR     = '/home/vanangamudi/agam/projects/code/tamilnlp/indraya-kiruvam/'
 
-# run like  -- scrapy crawl hindutamil -s JOBDIR='HINDU_TAMIL_DIR/jobs/hindutamil
+DATA_DIR       = '{}/data/'.format(CHCHCH_DIR)
+DELTAFETCH_DIR = '{}/deltafetch/hindutamil'.format(CHCHCH_DIR)
+HTTPCACHE_DIR  = '{}/httpcache/hindutamil'.format(CHCHCH_DIR)
+
+# run like  -- scrapy crawl hindutamil -s JOBDIR='CHCHCH_DIR/jobs/hindu_tamil
 DEPTH_PRIORITY = 1 
-SCHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleFifoDiskQueue'
+SCHEDULER_DISK_QUEUE   = 'scrapy.squeues.PickleFifoDiskQueue'
 SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
 
 #https://stackoverflow.com/a/39173768
@@ -103,7 +105,6 @@ Currently Scrapy does DNS resolution in a blocking way with usage of thread pool
 """
 REACTOR_THREADPOOL_MAXSIZE = 20
 
-
 #deltafetch
 # install libdb-dev
 # pip install scrapy-deltafetch
@@ -111,9 +112,10 @@ REACTOR_THREADPOOL_MAXSIZE = 20
 SPIDER_MIDDLEWARES['scrapy_deltafetch.DeltaFetch'] = 100
 DELTAFETCH_ENABLED = True
 
-DELTAFETCH_DIR = '{}/deltafetch/hindutamil'.format(HINDU_TAMIL_DIR)
 
-MONGODB_SERVER = "localhost"
-MONGODB_PORT = 27017
-MONGODB_DB = "test"
+# MongoDB to store the scraped data
+MONGODB_SERVER     = "localhost"
+MONGODB_PORT       = 27017
+
+MONGODB_DB         = "test"
 MONGODB_COLLECTION = "kiruvam"

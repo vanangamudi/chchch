@@ -5,9 +5,9 @@ from w3lib.html import remove_tags, remove_tags_with_content
 import scrapy
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
-from hindu_tamil.items import HinduTamilItem
+from hindu_tamil.items import Item
 
-class HinduTamilSpiderSpider(CrawlSpider):
+class HinduTamilSpider(CrawlSpider):
     name = 'hindu_tamil_spider'
     allowed_domains = ['hindutamil.in']
     start_urls = ['http://hindutamil.in/']
@@ -29,7 +29,7 @@ class HinduTamilSpiderSpider(CrawlSpider):
         publish_info = selector.xpath('//div[contains(@class,"publish-info")]')
         
         if selector:
-            item = HinduTamilItem()
+            item = Item()
 
             item['url']        = response.url                                                      
             item['filename']   = response.url.split('/')[-1].split('?')[0]                         
