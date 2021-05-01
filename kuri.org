@@ -1,0 +1,149 @@
+* TODO Separate projects for separate sites
+
+** hierarchy is as follows
+#+begin_src org
+  ,* root
+  ,** ch :githuborg:
+  ,*** ch-hindutamil
+  ,*** ch-nakkheeran
+  ,*** ch-vikatan
+  ,*** and so on...
+  ,** kiruvam-eeni
+  ,*** kiruvam.py 
+      - create ngrams for individual documents
+      - mongodb/plaintext - storage details should be abstracted
+
+  ,*** kiruvam-compose.py
+      - compose individual doc ngrams into groups based on give key like author, date, publisher, source such a blog, news etc
+
+  ,** interface to download the corpus
+
+  ,*** queryable via keys
+#+end_src
+
+* the initial idea didnt' work for a lot of reasons
+
+** CANC Single spider with xpath config 
+   having single spider with config file containing xpaths for items to be extracted is a bad idea for the same reason.
+** DONE Single scrapy project for all sites
+   having all crawlers under same scrapy project is a mess. it is better to have different scrapy project if the items and pipelines are gonna be different
+** DONE switched to mongodb instead of plaintext storage
+*** inode exhausted on 50GB machine
+    - httpcache, jobsdir for scrapy exhausted inode for 50GB on the scraper gcp machine
+    - even though the actual output dumped by scraper wasn't occupying a lot of inodes, this is clearly not scalable for multiple projects because,
+    - this is just for running one crawler for hindutamil
+   
+* hindutamil scraper
+
+  
+** move to mongodb
+   - httpcache and jobsdir take a lot of space
+   - doesn't seem cost effective to run on GCE
+   - move move to mongodb
+   - monogo db for storage instead of file;
+     - inode limit is easily hit when storage is < 50Gb
+     - versioning raw text seems overkill, so only ngrams is in plan
+
+     - return statements in makedate() and process_item() is very important
+     - for storing in mongodb collections - something with serialization
+
+   Note: line =echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list= needs to be changed based on the linux distro.
+
+   #+begin_src bash
+     sudo apt-get install gnupg wget
+     wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+     echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+     sudo apt-get update
+     sudo apt-get install -y mongodb-org
+
+   #+end_src
+
+
+   - enable DBM based caching
+   #+begin_src python
+     HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.DbmCacheStorage'
+   #+end_src
+
+** DATA_DIR and other configs in settings.py
+
+   - added DATA_DIR in settings.py file so that it is accessible to spider objects
+   - enable Filesystem based on HTTPCACHE
+   - increase reactor threadpool size to allow to allow concurrent DNS resolution apparently[1]
+   - install and enable deltafetch middleware
+
+   #+begin_src python
+     HTTPCACHE_IGNORE_HTTP_CODES = []
+     HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+     CHCHCH_DIR = '/home/vanangamudi/.chchch'
+
+     DATA_DIR = '{}/data/'.format(CHCHCH_DIR)
+
+     # run like  -- 
+     # $ scrapy crawl hindutamil \
+     #        -s JOBDIR='CHCHCH_DIR/jobs/hindutamil
+     DEPTH_PRIORITY = 1 
+     SCHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleFifoDiskQueue'
+     SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
+
+     #https://stackoverflow.com/a/39173768
+     """
+     Currently Scrapy does DNS resolution in a blocking way with usage 
+     of thread pool. With higher concurrency levels the crawling could 
+     be slow or even fail hitting DNS resolver timeouts. Possible solution
+     to increase the number of threads handling DNS queries. The DNS queue 
+     will be processed faster speeding up establishing of connection 
+     and crawling overall.
+     """
+     REACTOR_THREADPOOL_MAXSIZE = 20
+
+
+     #deltafetch
+     # install libdb-dev
+     # $ pip install scrapy-deltafetch
+     # $ scrapy crawl example -a deltafetch_reset=1
+     SPIDER_MIDDLEWARES['scrapy_deltafetch.DeltaFetch'] = 100
+     DELTAFETCH_ENABLED = True
+
+     DELTAFETCH_DIR = '{}/deltafetch/hindutamil'.format(CHCHCH_DIR)
+
+   #+end_src
+
+   [1] https://stackoverflow.com/a/39173768
+
+** DONE initial spider 
+   - for =http://hindutamil.in= site
+   - based off of scrapy.CrawlerSpider
+   - override parse() of spider class
+     - didn't know that it was not supposed to overridden
+     - but for some reason it worked, it still works
+   - with files dumped to individual text files via pipeline not the feed dump
+
+* Initial idea
+  
+** Keep three different repositories
+
+*** one for crawler scripts - contains all crawlers one for each website
+
+*** one for raw text dump from crawlers - versioned by git
+
+*** one for the kiruvam - where the kiruvameenu.sh will dump ngrams 
+
+** the following is the rough setup 
+
+#+begin_src bash
+  CRAWLER_SCRIPTS=newspaper_crawler_scripts
+  PACHAI_THARAVUTH_THOGUPPU=pachai-tharavuth-thoguppu
+  INDRAYA_KIRUVAM=indraya-kiruvam
+
+  LANGUAGE=tamil
+
+  for crawler in $CRAWLER_SCRIPTS/$LANGUAGE/*scraper.py:
+  do
+      echo 'starting crawler $crawler'
+      python3 crawler &
+  done
+
+
+#+end_src
+
