@@ -22,13 +22,17 @@ class HinduTamilSpider(CrawlSpider):
 
     ]
 
+    errored_count = 0
         
     def parse_news(self, response):
-
-        selector     = response.xpath('//div[contains(@class, "article-section")]')
-        publish_info = selector.xpath('//div[contains(@class,"publish-info")]')
         
-        if selector:
+        if self.errored_count % 20 == 0:
+            pprint("errored_count:{}\n".format(self.errored_count) + pformat(self.crawler.stats.get_stats()))
+
+        try:
+            selector     = response.xpath('//div[contains(@class, "article-section")]')
+            publish_info = selector.xpath('//div[contains(@class,"publish-info")]')
+        
             item = Item()
 
             item['url']        = response.url                                                      
@@ -45,3 +49,10 @@ class HinduTamilSpider(CrawlSpider):
             item['tags']    = selector.xpath('//div[contains(@class, "article-categories")]/a/text()').extract()
 
             yield item
+        except KeyboardInterrupt:
+            print('got killed by the keyboard :(')
+            raise KeyboardInterrupt
+        except:
+            self.errored_count += 1
+            self.logger.exception(urllib.parse.unquote(response.url))
+            
