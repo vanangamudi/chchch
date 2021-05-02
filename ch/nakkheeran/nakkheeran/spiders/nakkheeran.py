@@ -2,6 +2,8 @@ import re
 import bs4
 import pdb
 import datetime
+import urllib
+from pprint import pprint, pformat
 from w3lib.html import remove_tags, remove_tags_with_content
 
 import scrapy
@@ -17,13 +19,35 @@ class NakkheeranSpider(CrawlSpider):
     rules = [
         
         Rule(
-            LinkExtractor(allow=[r'/.*']),
+            LinkExtractor(
+                allow=[r'\w+/\w+/\w+'],
+
+                deny=[
+                    # r'|'.join(['about-us'
+                    #            ,'contact'
+                    #            ,'exclusive'
+                    #            ,'gallery'
+                    #            ,'home'
+                    #            ,'how-to-subscribe'
+                    #            ,'https:'
+                    #            ,'nakkheeran-tv'
+                    #            ,'privacy-policy'
+                    #            ,'promoted-content'
+                    #            ,'refund-cancellation-policy'
+                    #            ,'taxonomy'
+                    #            ,'terms'
+                    #            ,'user'
+                    #            ])
+                ]
+
+            ),
             callback='parse_news',
             follow=True,
         ),
 
     ]
 
+    errored_count = 0
 
     def _make_date(self, date_string):
         # example: "Published on 01/05/2021 (19:55) | Edited on 01/05/2021 (20:13)""
@@ -38,8 +62,13 @@ class NakkheeranSpider(CrawlSpider):
         
     def parse_news(self, response):
 
-        selector     = response.xpath('//div[@id="page-main-content"]')
-        if selector:
+        if self.errored_count % 20 == 0:
+            print('errored_count:{}'.format(self.errored_count))
+            pprint(self.crawler.stats.get_stats())
+
+        try:
+            selector     = response.xpath('//div[@id="page-main-content"]')
+
             item = Item()
 
             item['url']        = response.url                                                      
@@ -61,3 +90,13 @@ class NakkheeranSpider(CrawlSpider):
 
             if item['content']:
                 yield item
+
+        except KeyboardInterrupt:
+            print('got killed by the keyboard :(')
+            raise KeyboardInterrupt
+        except:
+            self.errored_count += 1
+            self.logger.exception(urllib.parse.unquote(response.url))
+
+
+
