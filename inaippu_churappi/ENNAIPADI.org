@@ -1,0 +1,7 @@
+
+* install pygraphviz
+  [[https://stackoverflow.com/a/42315670/1685729][pip install pygraphviz: No package 'libcgraph' found]]
+  #+begin_src bash
+    sudo apt-get install python3-dev graphviz libgraphviz-dev pkg-config
+    pip install pygraphviz
+  #+end_src

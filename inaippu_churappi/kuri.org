@@ -1,0 +1,2 @@
+* how to run
+  scrapy crawl ich -a start_urls='https://www.vikatan.com/' -o vikatan-urls.csv
