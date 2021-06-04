@@ -25,17 +25,21 @@
      pip install pymongo
 
    #+end_src
+* TODO use different mongo collections for each crawler
+* TODO create a cookiecutter for scrapy
+  to use same mongo-pipeline and item class basically
+* PROJ Separate projects for separate sites
 
-* TODO Separate projects for separate sites
-
-** hierarchy is as follows
+** DONE hierarchy is as follows
 #+begin_src org
   ,* root
   ,** ch :githuborg:
   ,*** ch-hindutamil
   ,*** ch-nakkheeran
   ,*** ch-vikatan
-  ,*** and so on...
+  ,*** and so on
+  ,** inaippu-churappi
+     to mine links to help with figuring out url patterns for the spiders
   ,** kiruvam-eeni
   ,*** kiruvam.py 
       - create ngrams for individual documents
