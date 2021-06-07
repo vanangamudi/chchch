@@ -44,12 +44,18 @@ class VikatanSpider(CrawlSpider):
         
     def parse_news(self, response):
 
-        if self.errored_count % 20 == 0:
+        if self.errored_count and self.errored_count % 20 == 0:
             print('errored_count:{}'.format(self.errored_count))
             pprint(self.crawler.stats.get_stats())
 
         try:
-            selector     = response.xpath('//article[contains(@class, "styles-m__story-header__2zP3F")]')
+            selector     = response.xpath(
+                '//article[contains(@class, "styles-m__story-header__2zP3F")]'
+            )
+            
+            if not selector:
+                return
+            
             item = Item()
 
             item['url']        = response.url                                                      
@@ -68,8 +74,8 @@ class VikatanSpider(CrawlSpider):
                 item['author'] = []
             
             item['date']    = selector.xpath(
-                '//span[contains(@class,"published")]/text()'
-            ).extract().strip()
+                '//span[contains(@class,"published")]/time/@datetime'
+            ).extract()[0].strip()
 
             item['date']    =  self._make_date(item['date'])
             
@@ -99,6 +105,5 @@ class VikatanSpider(CrawlSpider):
         except:
             self.errored_count += 1
             self.logger.exception(urllib.parse.unquote(response.url))
-
-
-
+            
+            
