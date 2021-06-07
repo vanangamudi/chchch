@@ -31,7 +31,9 @@ class MongoDBPipeline(object):
         for data in item:
             if not data:
                 raise DropItem("Missing data!")
-        self.collection.replace_one(
+
+        
+        retval = self.collection.replace_one(
             {'url' : item['url'] },
             dict(item),
             upsert = True

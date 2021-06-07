@@ -117,5 +117,5 @@ DELTAFETCH_ENABLED = True
 MONGODB_SERVER     = "localhost"
 MONGODB_PORT       = 27017
 
-MONGODB_DB         = "test"
-MONGODB_COLLECTION = "kiruvam"
+MONGODB_DB         = "chchch"
+MONGODB_COLLECTION = "vikatan"

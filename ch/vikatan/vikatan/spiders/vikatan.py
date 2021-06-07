@@ -11,6 +11,8 @@ from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from vikatan.items import Item
 
+from  dateutil.parser import parse as fromisoformat
+
 class VikatanSpider(CrawlSpider):
     name = 'vikatan_spider'
     allowed_domains = ['vikatan.com']
@@ -32,15 +34,7 @@ class VikatanSpider(CrawlSpider):
     errored_count = 0
 
     def _make_date(self, date_string):
-        # example: "Published:24 Apr 2021 9 AM"
-        pattern = r'Published:(\d+) (\w+) (\d+).*'
-        match = re.search(pattern, date_string)
-        if match:
-            day, month, year = match.groups()
-            day, month, year = map(int, [day, month, year])
-            return datetime.datetime(year, month, day)
-        else:
-            return datetime.datetime(1, 1, 1)
+        return fromisoformat(date_string)
         
     def parse_news(self, response):
 
@@ -50,7 +44,7 @@ class VikatanSpider(CrawlSpider):
 
         try:
             selector     = response.xpath(
-                '//article[contains(@class, "styles-m__story-header__2zP3F")]'
+                '//article'
             )
             
             if not selector:
@@ -67,7 +61,7 @@ class VikatanSpider(CrawlSpider):
             author = selector.xpath(
                 '//span[contains(@class,"contributor-name")]/text()'
             )
-            
+
             if author:
                 item['author'] = [i.extract().strip() for i in author]
             else:
@@ -78,14 +72,15 @@ class VikatanSpider(CrawlSpider):
             ).extract()[0].strip()
 
             item['date']    =  self._make_date(item['date'])
-            
+
             item['content'] = selector.xpath(
                 '//div[contains(@class, "story-element-text")]'
             ).extract()
             
-            item['content'] = remove_tags(
-                remove_tags_with_content(item['content'], ('script', ))
-            ).strip()
+            item['content'] = '\n\n'.join([
+                remove_tags(remove_tags_with_content(content, ('script', ))).strip()
+                for content in item['content']
+            ])
             
             item['title']   = selector.xpath(
                 '//h1[contains(@class,"headline")]/text()'
@@ -95,7 +90,7 @@ class VikatanSpider(CrawlSpider):
                 '//ul[contains(@class, "tags")]//a/text()'
             ).extract()
 
-
+            
             if item['content']:
                 yield item
 
@@ -105,5 +100,4 @@ class VikatanSpider(CrawlSpider):
         except:
             self.errored_count += 1
             self.logger.exception(urllib.parse.unquote(response.url))
-            
             
