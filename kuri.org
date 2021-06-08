@@ -1,3 +1,21 @@
+* mongodb restart failed
+  #+begin_src bash
+    sudo rm -rf /tmp/mongodb-27017.sock
+    sudo systemctl restart  mongod
+    sudo systemctl start  mongod
+    sudo systemctl status  mongod
+  #+end_src
+* xpath expresssions
+  #+begin_src python
+
+    links = [
+	urllib.parse.unquote(i)  for i in response.xpath(
+	    '//*[@href][not(contains(@href,"javascript:void"))]'
+	).extract()
+    ]
+
+
+  #+end_src
 * scrapy setup
 ** virutal env
    #+begin_src bash
