@@ -22,7 +22,7 @@ class {{cookiecutter.directory_name}}Spider(CrawlSpider):
         
         Rule(
             LinkExtractor(
-                allow=[r'\w+/\w+/\w+'],
+                allow=[r'.*'],
 
             ),
             callback='parse_news',
