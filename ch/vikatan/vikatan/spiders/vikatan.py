@@ -13,10 +13,10 @@ from vikatan.items import Item
 
 from  dateutil.parser import parse as fromisoformat
 
-class VikatanSpider(CrawlSpider):
+class vikatanSpider(CrawlSpider):
     name = 'vikatan_spider'
     allowed_domains = ['vikatan.com']
-    start_urls = ['http://vikatan.com/']
+    start_urls = ['http://vikatan.com']
 
     rules = [
         
@@ -43,55 +43,52 @@ class VikatanSpider(CrawlSpider):
             pprint(self.crawler.stats.get_stats())
 
         try:
-            selector     = response.xpath(
+            articles     = response.xpath(
                 '//article'
             )
             
-            if not selector:
-                return
-            
-            item = Item()
-
-            item['url']        = response.url                                                      
-            item['filename']   = response.url.split('/')[-1].split('?')[0]                         
-            item['breadcrumb'] = response.xpath(
+            for article in articles:            
+                item = Item()
+                
+                item['url']        = response.url                                                      
+                item['filename']   = response.url.split('/')[-1].split('?')[0]                         
+                item['breadcrumb'] = response.xpath(
                 '//h2[@id="system-breadcrumb"]/ol[@class="breadcrumb"]/li/a/text()'
-            ).extract()
+                ).extract()
+                
+                author = article.xpath(
+                    '//span[contains(@class,"contributor-name")]/text()'
+                )
+                
+                if author:
+                    item['author'] = [i.extract().strip() for i in author]
+                else:
+                    item['author'] = []
+                    
+                item['date']    = article.xpath(
+                    '//span[contains(@class,"published")]/time/@datetime'
+                ).extract()[0].strip()
             
-            author = selector.xpath(
-                '//span[contains(@class,"contributor-name")]/text()'
-            )
-
-            if author:
-                item['author'] = [i.extract().strip() for i in author]
-            else:
-                item['author'] = []
+                item['date']    =  self._make_date(item['date'])
+                
+                item['content'] = article.xpath(
+                    '//div[contains(@class, "story-element-text")]'
+                ).extract()
+                
+                item['content'] = '\n\n'.join([
+                    remove_tags(remove_tags_with_content(content, ('script', ))).strip()
+                    for content in item['content']
+                ])
+                
+                item['title']   = article.xpath(
+                    '//h1[contains(@class,"headline")]/text()'
+                )[0].extract().strip()
+                
+                item['tags']    = article.xpath(
+                    '//ul[contains(@class, "tags")]//a/text()'
+                ).extract()
+                
             
-            item['date']    = selector.xpath(
-                '//span[contains(@class,"published")]/time/@datetime'
-            ).extract()[0].strip()
-
-            item['date']    =  self._make_date(item['date'])
-
-            item['content'] = selector.xpath(
-                '//div[contains(@class, "story-element-text")]'
-            ).extract()
-            
-            item['content'] = '\n\n'.join([
-                remove_tags(remove_tags_with_content(content, ('script', ))).strip()
-                for content in item['content']
-            ])
-            
-            item['title']   = selector.xpath(
-                '//h1[contains(@class,"headline")]/text()'
-            )[0].extract().strip()
-            
-            item['tags']    = selector.xpath(
-                '//ul[contains(@class, "tags")]//a/text()'
-            ).extract()
-
-            
-            if item['content']:
                 yield item
 
         except KeyboardInterrupt:

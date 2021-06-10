@@ -6,7 +6,7 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-from vikatan.settings import DATA_DIR
+
 import os
 import re
 import json
@@ -14,6 +14,7 @@ import datetime
 
 import pymongo
 
+from vikatan.settings import DATA_DIR
 from vikatan.settings import (MONGODB_COLLECTION, MONGODB_DB,
                              MONGODB_SERVER, MONGODB_PORT)
 
