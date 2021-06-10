@@ -9,24 +9,98 @@
      HTTPCACHE_DIR  = '{}/httpcache/{{cookiecutter.directory_name}}'.format(CHCHCH_DIR)
 
    #+end_src
-* mongodb restart failed
-  #+begin_src bash
-    sudo rm -rf /tmp/mongodb-27017.sock
-    sudo systemctl restart  mongod
-    sudo systemctl start  mongod
-    sudo systemctl status  mongod
-  #+end_src
-* xpath expresssions
-  #+begin_src python
+* tips and tricks
+** scrapy seems to load loads all files under its project directory.
+   #+begin_src python 
+     articles   = response.xpath('//section[contains(@class, "pt-main-news-section")]')
+     for article in artciles:
+	 item = Item()
+	 item['url']        = response.url                                                      
+	 .
+	 .
+	 .
+	 author_date = artcile.xpath('//div[@class=article-author]')
+	 item['author'] = author_date.xpath('//a/text()').extract()
+        
 
-    links = [
-	urllib.parse.unquote(i)  for i in response.xpath(
-	    '//*[@href][not(contains(@href,"javascript:void"))]'
-	).extract()
-    ]
+	 item['date']    = selector.xpath(
+	     '//span[contains(@class,"pull-right")]/text()'
+	 ).extract()[0].strip()
+
+   #+end_src
+   
+   #+begin_src bash
+			 vanangamudi@karunthulai:~/agam/projects/code/tamilnlp/indraya-kiruvam/chchch/ch/puthiyathalaimurai/puthiyathalaimurai/spiders
+
+       $ tree ../
+       ../
+       ├── __init__.py
+       ├── items.py
+       ├── middlewares.py
+       ├── pipelines.py
+       ├── settings.py
+       └── spiders
+	   ├── feed.json
+	   ├── __init__.py
+	   ├── puthiyathalaimurai.py
+	   └── temp.py
+
+       1 directory, 9 files
+
+       $ scrapy shell http://www.puthiyathalaimurai.com/newsview/105826/Sanjay-Manjrekar-Five-Controversial-Comments-That-Have-Caused-A-Stir-On-Social-Media
+       Traceback (most recent call last):
+       File "/home/vanangamudi/agam/env/chchch/bin/scrapy", line 8, in <module>
+       sys.exit(execute())
+       File "/home/vanangamudi/agam/env/chchch/lib/python3.6/site-packages/scrapy/cmdline.py", line 144, in execute
+       cmd.crawler_process = CrawlerProcess(settings)
+       File "/home/vanangamudi/agam/env/chchch/lib/python3.6/site-packages/scrapy/crawler.py", line 280, in __init__
+       super().__init__(settings)
+       File "/home/vanangamudi/agam/env/chchch/lib/python3.6/site-packages/scrapy/crawler.py", line 152, in __init__
+       self.spider_loader = self._get_spider_loader(settings)
+       File "/home/vanangamudi/agam/env/chchch/lib/python3.6/site-packages/scrapy/crawler.py", line 146, in _get_spider_loader
+       return loader_cls.from_settings(settings.frozencopy())
+       File "/home/vanangamudi/agam/env/chchch/lib/python3.6/site-packages/scrapy/spiderloader.py", line 67, in from_settings
+       return cls(settings)
+       File "/home/vanangamudi/agam/env/chchch/lib/python3.6/site-packages/scrapy/spiderloader.py", line 24, in __init__
+       self._load_all_spiders()
+       File "/home/vanangamudi/agam/env/chchch/lib/python3.6/site-packages/scrapy/spiderloader.py", line 51, in _load_all_spiders
+       for module in walk_modules(name):
+     File "/home/vanangamudi/agam/env/chchch/lib/python3.6/site-packages/scrapy/utils/misc.py", line 88, in walk_modules
+     submod = import_module(fullpath)
+     File "/usr/lib/python3.6/importlib/__init__.py", line 126, in import_module
+     return _bootstrap._gcd_import(name[level:], package, level)
+     File "<frozen importlib._bootstrap>", line 994, in _gcd_import
+     File "<frozen importlib._bootstrap>", line 971, in _find_and_load
+     File "<frozen importlib._bootstrap>", line 955, in _find_and_load_unlocked
+     File "<frozen importlib._bootstrap>", line 665, in _load_unlocked
+     File "<frozen importlib._bootstrap_external>", line 674, in exec_module
+     File "<frozen importlib._bootstrap_external>", line 781, in get_code
+     File "<frozen importlib._bootstrap_external>", line 741, in source_to_code
+     File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+     File "/home/vanangamudi/agam/projects/code/tamilnlp/indraya-kiruvam/chchch/ch/puthiyathalaimurai/puthiyathalaimurai/spiders/temp.py", line 6
+     .
+     ^
+     SyntaxError: invalid syntax
+     (chchch) vanangamudi@karunthulai:~/agam/projects/cod
+   #+end_src
+** mongodb restart failed
+   #+begin_src bash
+     sudo rm -rf /tmp/mongodb-27017.sock
+     sudo systemctl restart  mongod
+     sudo systemctl start  mongod
+     sudo systemctl status  mongod
+   #+end_src
+** xpath expresssions
+   #+begin_src python
+
+     links = [
+	 urllib.parse.unquote(i)  for i in response.xpath(
+	     '//*[@href][not(contains(@href,"javascript:void"))]'
+	 ).extract()
+     ]
 
 
-  #+end_src
+   #+end_src
 * scrapy setup
 ** virutal env
    #+begin_src bash
