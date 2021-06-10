@@ -42,24 +42,24 @@ class vikatanSpider(CrawlSpider):
             print('errored_count:{}'.format(self.errored_count))
             pprint(self.crawler.stats.get_stats())
 
-        try:
-            articles     = response.xpath(
-                '//article'
-            )
+        articles     = response.xpath(
+            '//article'
+        )
             
-            for article in articles:            
-                item = Item()
-                
-                item['url']        = response.url                                                      
-                item['filename']   = response.url.split('/')[-1].split('?')[0]                         
-                item['breadcrumb'] = response.xpath(
-                '//h2[@id="system-breadcrumb"]/ol[@class="breadcrumb"]/li/a/text()'
-                ).extract()
-                
-                author = article.xpath(
-                    '//span[contains(@class,"contributor-name")]/text()'
-                )
-                
+        for article in articles:
+            try:
+                    item = Item()
+                    
+                    item['url']        = response.url                                                      
+                    item['filename']   = response.url.split('/')[-1].split('?')[0]                         
+                    item['breadcrumb'] = response.xpath(
+                        '//h2[@id="system-breadcrumb"]/ol[@class="breadcrumb"]/li/a/text()'
+                    ).extract()
+                    
+                    author = article.xpath(
+                        '//span[contains(@class,"contributor-name")]/text()'
+                    )
+                    
                 if author:
                     item['author'] = [i.extract().strip() for i in author]
                 else:
@@ -90,11 +90,11 @@ class vikatanSpider(CrawlSpider):
                 
             
                 yield item
-
-        except KeyboardInterrupt:
-            print('got killed by the keyboard :(')
-            raise KeyboardInterrupt
-        except:
-            self.errored_count += 1
-            self.logger.exception(urllib.parse.unquote(response.url))
+                
+            except KeyboardInterrupt:
+                print('got killed by the keyboard :(')
+                raise KeyboardInterrupt
+            except:
+                self.errored_count += 1
+                self.logger.exception(urllib.parse.unquote(response.url))
             
