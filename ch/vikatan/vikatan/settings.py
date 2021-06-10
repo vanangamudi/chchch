@@ -25,7 +25,7 @@ CONCURRENT_REQUESTS = 100
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -68,14 +68,14 @@ ITEM_PIPELINES = {
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
-#AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_ENABLED = True
 # The initial download delay
-#AUTOTHROTTLE_START_DELAY = 5
+AUTOTHROTTLE_START_DELAY = 5
 # The maximum download delay to be set in case of high latencies
-#AUTOTHROTTLE_MAX_DELAY = 60
+AUTOTHROTTLE_MAX_DELAY = 60
 # The average number of requests Scrapy should be sending in parallel to
 # each remote server
-#AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
+AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
 # Enable showing throttling stats for every response received:
 #AUTOTHROTTLE_DEBUG = False
 
@@ -88,7 +88,7 @@ HTTPCACHE_IGNORE_HTTP_CODES = []
 HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.DbmCacheStorage'
 
 
-CHCHCH_DIR     = '/home/vanangamudi/agam/projects/code/tamilnlp/indraya-kiruvam/'
+CHCHCH_DIR     = '/home/vanangamudi/.chchch/'
 
 DATA_DIR       = '{}/data/'.format(CHCHCH_DIR)
 DELTAFETCH_DIR = '{}/deltafetch/vikatan'.format(CHCHCH_DIR)
@@ -119,3 +119,10 @@ MONGODB_PORT       = 27017
 
 MONGODB_DB         = "chchch"
 MONGODB_COLLECTION = "vikatan"
+
+
+
+RETRY_ENABLED = True
+RETRY_TIMES = 2  # initial response + 2 retries = 3 requests
+RETRY_HTTP_CODES = [500, 502, 503, 504, 522, 524, 408, 429]
+RETRY_PRIORITY_ADJUST = -1
