@@ -105,5 +105,4 @@ class PuthiyaThalaimuraiSpider(CrawlSpider):
             except:
                 self.errored_count += 1
                 self.logger.exception(urllib.parse.unquote(response.url))
-                pdb.set_trace()
                 
