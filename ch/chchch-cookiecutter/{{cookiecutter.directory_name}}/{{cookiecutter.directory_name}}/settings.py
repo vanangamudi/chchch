@@ -1,3 +1,4 @@
+import os
 # Scrapy settings for {{cookiecutter.directory_name}} project
 #
 # For simplicity, this file contains only settings considered important or
@@ -88,7 +89,7 @@ HTTPCACHE_IGNORE_HTTP_CODES = []
 HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.DbmCacheStorage'
 
 
-CHCHCH_DIR     = '/home/vanangamudi/agam/projects/code/tamilnlp/indraya-kiruvam/'
+CHCHCH_DIR     = os.environ.get('CHCHCH_DIR') #or '/home/vanangamudi/agam/projects/code/tamilnlp/indraya-kiruvam/'
 
 DATA_DIR       = '{}/data/'.format(CHCHCH_DIR)
 DELTAFETCH_DIR = '{}/deltafetch/{{cookiecutter.directory_name}}'.format(CHCHCH_DIR)
