@@ -21,13 +21,22 @@ from {{cookiecutter.directory_name}}.settings import (MONGODB_COLLECTION, MONGOD
 class MongoDBPipeline(object):
 
     def __init__(self):
-        connection = pymongo.MongoClient(
+        self.connection = pymongo.MongoClient(
             MONGODB_SERVER,
             MONGODB_PORT
         )
-        db = connection[MONGODB_DB]
-        self.collection = db[MONGODB_COLLECTION]
 
+        self.setup_db()
+        
+    def setup_db(self):
+        self.db = self.connection[MONGODB_DB]
+        self.collection = self.db[MONGODB_COLLECTION]
+
+        self.collection.create_index([
+            ("url", -1)
+        ])
+
+        
     def process_item(self, item, spider):
         for data in item:
             if not data:
