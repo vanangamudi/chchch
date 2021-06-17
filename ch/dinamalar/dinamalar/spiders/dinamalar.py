@@ -29,6 +29,21 @@ MONTHS = {
         ,'டிசம்பர்': 'Dec'
 }
 
+SHORTMONTHS = {
+        'ஜன' : 'Jan'
+        ,'பிப்': 'Feb'
+        ,'மார்': 'Mar'
+        ,'ஏப்' : 'Apr'
+        ,'மே' : 'May'
+        ,'ஜூன்' : 'Jun'
+        ,'ஜூலை': 'Jul'
+        ,'ஆக': 'Aug'
+        ,'செப்': 'Sep'
+        ,'அக்': 'Oct'
+        ,'நவ': 'Nov'
+        ,'டிச': 'Dec'
+}
+
 class dinamalarSpider(CrawlSpider):
     name = 'dinamalar_spider'
     allowed_domains = ['dinamalar.com']
@@ -53,6 +68,9 @@ class dinamalarSpider(CrawlSpider):
     def _make_date(self, date_string):
         print('date: ', date_string)
         for k, v in MONTHS.items():
+            date_string = date_string.replace(k, v)
+
+        for k, v in SHORTMONTHS.items():
             date_string = date_string.replace(k, v)
 
         date_string = date_string.split(':')[-1]
@@ -94,9 +112,11 @@ class dinamalarSpider(CrawlSpider):
             item['url']        = response.url                                                      
             item['filename']   = response.url.split('/')[-1].split('?')[0]                         
             item['breadcrumb'] = response.xpath(
-                '//div[@id="box_title"]/h3/a/text()'
+                '//div[@id="box_title"]/h3/a/span/text()'
+            ).extract() or response.xpath(
+                '//div[contains(@class, "breadcrumb")]/a/text()'
             ).extract()
-            
+             
             author = selector.xpath(
                 './/span[contains(@class,"contributor-name")]/text()'
             )
