@@ -130,7 +130,6 @@ class dinamalarSpider(CrawlSpider):
                 './/div[contains(@class, "tags")]/span/a/text()'
             ).extract()
 
-            pprint(item)
             
             yield item
 
@@ -139,5 +138,5 @@ class dinamalarSpider(CrawlSpider):
             raise KeyboardInterrupt
         except:
             self.errored_count += 1
-            self.logger.exception(urllib.parse.unquote(response.url))
-            
+            #self.logger.exception(urllib.parse.unquote(response.url))
+            self.logger.exception(response.url)
