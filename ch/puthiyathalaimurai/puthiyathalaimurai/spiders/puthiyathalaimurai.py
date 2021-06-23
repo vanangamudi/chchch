@@ -26,7 +26,7 @@ class PuthiyaThalaimuraiSpider(CrawlSpider):
         
         Rule(
             LinkExtractor(
-                allow=[r'\w+/\w+/\w+'],
+                allow=[r'.*'],
 
             ),
             callback='parse_news',
