@@ -48,17 +48,17 @@ class vikatanSpider(CrawlSpider):
             
         for article in articles:
             try:
-                    item = Item()
-                    
-                    item['url']        = response.url                                                      
-                    item['filename']   = response.url.split('/')[-1].split('?')[0]                         
-                    item['breadcrumb'] = response.xpath(
-                        '//h2[@id="system-breadcrumb"]/ol[@class="breadcrumb"]/li/a/text()'
-                    ).extract()
-                    
-                    author = article.xpath(
-                        '//span[contains(@class,"contributor-name")]/text()'
-                    )
+                item = Item()
+                
+                item['url']        = response.url                                                      
+                item['filename']   = response.url.split('/')[-1].split('?')[0]                         
+                item['breadcrumb'] = response.xpath(
+                    '//h2[@id="system-breadcrumb"]/ol[@class="breadcrumb"]/li/a/text()'
+                ).extract()
+                
+                author = article.xpath(
+                    '//span[contains(@class,"contributor-name")]/text()'
+                )
                     
                 if author:
                     item['author'] = [i.extract().strip() for i in author]

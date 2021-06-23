@@ -1,7 +1,9 @@
 import bs4
 import pdb
+from pprint import pprint, pformat
 from w3lib.html import remove_tags, remove_tags_with_content
 
+import  urllib
 import scrapy
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
@@ -55,4 +57,4 @@ class HinduTamilSpider(CrawlSpider):
         except:
             self.errored_count += 1
             self.logger.exception(urllib.parse.unquote(response.url))
-            
+            print(response.url)
