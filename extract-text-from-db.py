@@ -7,6 +7,7 @@ import json
 import datetime
 from tqdm import tqdm
 
+CHUNK_SIZE = 500000
 
 def datetime_converter(o):
     if isinstance(o, datetime.datetime):
@@ -24,10 +25,13 @@ if __name__ == '__main__':
     db = client[dbname]
     
     counter = Counter()
-    
-    with gzip.open('{}-corpus.txt.gz'.format(collection), 'wt') as f:
-        items = [item for item in db[collection].find()]
-        for item in tqdm(items):
-            del item['_id']
-            
-        f.write(json.dumps(items, indent=2, ensure_ascii=False, default = datetime_converter))
+    items = [item for item in db[collection].find()]
+
+    for item in tqdm(items):
+        del item['_id']
+
+    for i in range(len(items) // CHUNK_SIZE + 1):
+        start_index, end_index = i * CHUNK_SIZE, (i+1) * CHUNK_SIZE
+        print('writing chunk {}-{}'.format(start_index, end_index))
+        with gzip.open('{}-corpus--chunk-{}-{}.json.gz'.format(collection, start_index, end_index), 'wt') as f:
+            f.write(json.dumps(items[start_index: end_index], indent=2, ensure_ascii=False, default = datetime_converter))
